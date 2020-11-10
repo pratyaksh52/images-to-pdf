@@ -1,4 +1,2 @@
-*
-!images-to-pdf.py
-!requirements.txt
-!.gitignore
+/imgs
+desktop.ini
