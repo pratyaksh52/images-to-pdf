@@ -1,6 +1,19 @@
-from PIL import Image
-from PyPDF2 import PdfFileMerger, PdfFileReader
 import os, sys
+
+# importing third-party modules
+try:
+    from PIL import Image
+    from PyPDF2 import PdfFileMerger, PdfFileReader    
+except ImportError:
+    
+    print("""##################################
+    Dependencies are not installed, please install the dependencies by using
+    
+    'pip install -r requirements.txt'""")
+    
+    sys.exit()
+
+
 
 def convert_to_pdf(read_from, write_to):
     """converts an image to pdf
