@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import os, sys
 
 # importing third-party modules
@@ -38,12 +40,19 @@ def convert_to_pdf(read_from, write_to):
 
 
 def main():
+
+    # Get the source directory
+    if len(sys.argv) != 2:
+        sys.exit("Please pass exactly one argument.")
+    
+    source_path = sys.argv[1]
+
     image_extensions = ("jpeg", "jpg", "png")  # tuple containing image file extensions
 
     # creating a PDF object which will have the final pdf
     combined_pdf_object = PdfMerger()
 
-    for content in os.listdir():
+    for content in os.listdir(source_path):
         if os.path.isdir(content) or (content.split(".")[-1] not in image_extensions):
             continue
 
