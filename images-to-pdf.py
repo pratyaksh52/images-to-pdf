@@ -3,7 +3,7 @@ import os, sys
 # importing third-party modules
 try:
     from PIL import Image
-    from PyPDF2 import PdfFileMerger, PdfFileReader    
+    from PyPDF2 import PdfMerger, PdfReader    
 except ImportError:
     
     print("""##################################
@@ -41,7 +41,7 @@ def main():
     image_extensions = ("jpeg", "jpg", "png")   # tuple containing image file extensions
 
     # creating a PDF object which will have the final pdf
-    combined_pdf_object = PdfFileMerger()
+    combined_pdf_object = PdfMerger()
 
     for content in os.listdir():
         if os.path.isdir(content) or (content.split(".")[-1] not in image_extensions):
@@ -52,7 +52,7 @@ def main():
         convert_to_pdf(content, iterable_pdf)
 
         # adding this pdf to the PDF object
-        combined_pdf_object.append(PdfFileReader(iterable_pdf))
+        combined_pdf_object.append(PdfReader(iterable_pdf))
     
     combined_pdf_object.write("./final.pdf")        # writing the PDF object as a pdf file
     os.remove(iterable_pdf)     # removing the tempoarary pdf
@@ -60,3 +60,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+    
