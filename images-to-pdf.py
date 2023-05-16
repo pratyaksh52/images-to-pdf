@@ -3,16 +3,16 @@ import os, sys
 # importing third-party modules
 try:
     from PIL import Image
-    from PyPDF2 import PdfMerger, PdfReader    
+    from PyPDF2 import PdfMerger, PdfReader
 except ImportError:
-    
-    print("""##################################
+    print(
+        """##################################
     Dependencies are not installed, please install the dependencies by using
     
-    'pip install -r requirements.txt'""")
-    
-    sys.exit()
+    'pip install -r requirements.txt'"""
+    )
 
+    sys.exit()
 
 
 def convert_to_pdf(read_from, write_to):
@@ -38,7 +38,7 @@ def convert_to_pdf(read_from, write_to):
 
 
 def main():
-    image_extensions = ("jpeg", "jpg", "png")   # tuple containing image file extensions
+    image_extensions = ("jpeg", "jpg", "png")  # tuple containing image file extensions
 
     # creating a PDF object which will have the final pdf
     combined_pdf_object = PdfMerger()
@@ -46,18 +46,17 @@ def main():
     for content in os.listdir():
         if os.path.isdir(content) or (content.split(".")[-1] not in image_extensions):
             continue
-        
+
         # making a pdf off the current image
         iterable_pdf = "./iterable_pdf_to_be_deleted.pdf"
         convert_to_pdf(content, iterable_pdf)
 
         # adding this pdf to the PDF object
         combined_pdf_object.append(PdfReader(iterable_pdf))
-    
-    combined_pdf_object.write("./final.pdf")        # writing the PDF object as a pdf file
-    os.remove(iterable_pdf)     # removing the tempoarary pdf
+
+    combined_pdf_object.write("./final.pdf")  # writing the PDF object as a pdf file
+    os.remove(iterable_pdf)  # removing the tempoarary pdf
 
 
 if __name__ == "__main__":
     main()
-    
