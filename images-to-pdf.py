@@ -42,6 +42,7 @@ def _get_args():
         "-d",
         "--dest_path",
         dest="dest_path",
+        type=Path,
         help=(
             "Path of the directory where the pdf is to be dumped. "
             "Default is $SOURCE_DIR/final.pdf. "
@@ -56,11 +57,20 @@ def _get_args():
 
 def _postprocess_args(args):
     args.source_dir = Path(os.path.abspath(args.source_dir))
+    
+    if not args.source_dir.exists():
+        raise FileNotFoundError("Source path does not exist")
 
     if not args.dest_path:
         args.dest_path = Path(args.source_dir, "final.pdf")
+    elif args.dest_path.is_dir():
+        raise ValueError("Please pass full dest path including filename")
     else:
         args.dest_path = Path(os.path.abspath(args.dest_path))
+
+    if not args.dest_path.parent.exists():
+        os.makedirs(args.dest_path.parent, exist_ok=True)
+        print(f"Creating {args.dest_path.parent} as it does not exist")
 
     return args
 
