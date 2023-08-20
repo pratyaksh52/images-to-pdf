@@ -4,6 +4,8 @@ import argparse
 import os
 import sys
 import traceback
+from pathlib import Path
+from typing import List
 
 # importing third-party modules
 try:
@@ -19,6 +21,10 @@ except ImportError:
 
     traceback.print_exc()
     sys.exit()
+
+
+# tuple containing image file extensions
+IMAGE_EXTENSIONS = (".jpeg", ".jpg", ".png")
 
 
 def _get_args():
@@ -49,15 +55,34 @@ def _get_args():
 
 
 def _postprocess_args(args):
-    args.source_dir = os.path.abspath(args.source_dir)
+    args.source_dir = Path(os.path.abspath(args.source_dir))
 
     if not args.dest_path:
-        args.dest_path = os.path.join(args.source_dir, "final.pdf")
+        args.dest_path = Path(args.source_dir, "final.pdf")
+    else:
+        args.dest_path = Path(os.path.abspath(args.dest_path))
 
     return args
 
 
-def convert_to_pdf(read_from, write_to):
+def filter_images_from_filepath(path: Path) -> List[Path]:
+    """Filter out all files from a path that is not an image
+
+    Args:
+        path (List[Path]): Path where the filtering needs to be done.
+
+    Returns:
+        List[Path: List of pathlib objects containing image paths
+    """
+    images_filepath = []
+    for x in path.iterdir():
+        if x.is_dir() or x.suffix not in IMAGE_EXTENSIONS:
+            continue
+        images_filepath.append(x)
+    return images_filepath
+
+
+def convert_image_to_pdf(read_from, write_to):
     """converts an image to pdf
 
     Args:
@@ -79,6 +104,23 @@ def convert_to_pdf(read_from, write_to):
     image_file.close()
 
 
+def convert_images_to_pdf(image_path_list: List[Path]) -> PdfMerger:
+    # creating a PDF object which will have the final pdf
+    combined_pdf_object = PdfMerger()
+    iterable_pdf_path = Path(
+        image_path_list[0].parent, "./iterable_pdf_to_be_deleted.pdf"
+    )
+    for image_path in image_path_list:
+        # making a pdf off the current image
+        convert_image_to_pdf(image_path, iterable_pdf_path)
+
+        # adding this pdf to the PDF object
+        combined_pdf_object.append(PdfReader(iterable_pdf_path))
+
+    os.remove(iterable_pdf_path)
+    return combined_pdf_object
+
+
 def main():
     args = _get_args()
 
@@ -86,26 +128,12 @@ def main():
     source_path = args.source_dir
     dest_path = args.dest_path
 
-    # tuple containing image file extensions
-    image_extensions = ("jpeg", "jpg", "png")
+    image_paths = filter_images_from_filepath(source_path)
 
-    # creating a PDF object which will have the final pdf
-    combined_pdf_object = PdfMerger()
-
-    for content in os.listdir(source_path):
-        if os.path.isdir(content) or (content.split(".")[-1] not in image_extensions):
-            continue
-        content_path = os.path.join(source_path, content)
-        # making a pdf off the current image
-        iterable_pdf = "./iterable_pdf_to_be_deleted.pdf"
-        convert_to_pdf(content_path, iterable_pdf)
-
-        # adding this pdf to the PDF object
-        combined_pdf_object.append(PdfReader(iterable_pdf))
+    combined_pdf_object = convert_images_to_pdf(image_paths)
 
     # writing the PDF object as a pdf file
     combined_pdf_object.write(os.path.join(dest_path))
-    os.remove(iterable_pdf)  # removing the tempoarary pdf
 
 
 if __name__ == "__main__":
