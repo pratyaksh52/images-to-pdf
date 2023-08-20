@@ -82,8 +82,8 @@ def filter_images_from_filepath(path: Path) -> List[Path]:
     return images_filepath
 
 
-def convert_image_to_pdf(read_from, write_to):
-    """converts an image to pdf
+def convert_image_to_pdf(read_from: Path, write_to: Path):
+    """Converts an image to pdf.
 
     Args:
         read_from (str): path of image file to be converted
@@ -105,6 +105,14 @@ def convert_image_to_pdf(read_from, write_to):
 
 
 def convert_images_to_pdf(image_path_list: List[Path]) -> PdfMerger:
+    """Converts a list of image paths to a single PdfMerger object
+
+    Args:
+        image_path_list (List[Path]): List of Path objects of images
+
+    Returns:
+        PdfMerger: Object containing all images
+    """
     # creating a PDF object which will have the final pdf
     combined_pdf_object = PdfMerger()
     iterable_pdf_path = Path(
