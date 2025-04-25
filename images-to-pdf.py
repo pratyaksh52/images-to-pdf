@@ -2,26 +2,11 @@
 
 import argparse
 import os
-import sys
-import traceback
 from pathlib import Path
 from typing import List
 
-# importing third-party modules
-try:
-    from PIL import Image
-    from PyPDF2 import PdfMerger, PdfReader
-except ImportError:
-    print(
-        """##################################
-    Dependencies are not installed, please install the dependencies by using
-    
-    'pip install -r requirements.txt'"""
-    )
-
-    traceback.print_exc()
-    sys.exit()
-
+from PIL import Image
+from PyPDF2 import PdfMerger, PdfReader
 
 # tuple containing image file extensions
 IMAGE_EXTENSIONS = (".jpeg", ".jpg", ".png")
@@ -57,7 +42,7 @@ def _get_args():
 
 def _postprocess_args(args):
     args.source_dir = Path(os.path.abspath(args.source_dir))
-    
+
     if not args.source_dir.exists():
         raise FileNotFoundError("Source path does not exist")
 
@@ -125,9 +110,7 @@ def convert_images_to_pdf(image_path_list: List[Path]) -> PdfMerger:
     """
     # creating a PDF object which will have the final pdf
     combined_pdf_object = PdfMerger()
-    iterable_pdf_path = Path(
-        image_path_list[0].parent, "./iterable_pdf_to_be_deleted.pdf"
-    )
+    iterable_pdf_path = Path(image_path_list[0].parent, "./iterable_pdf_to_be_deleted.pdf")
     for image_path in image_path_list:
         # making a pdf off the current image
         convert_image_to_pdf(image_path, iterable_pdf_path)
