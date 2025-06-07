@@ -74,7 +74,7 @@ def filter_images_from_filepath(path: Path) -> List[Path]:
         if x.is_dir() or x.suffix not in IMAGE_EXTENSIONS:
             continue
         images_filepath.append(x)
-    return images_filepath
+    return sorted(images_filepath)
 
 
 def convert_image_to_pdf(read_from: Path, write_to: Path):
