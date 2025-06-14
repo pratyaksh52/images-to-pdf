@@ -129,7 +129,12 @@ def main():
     source_path = args.source_dir
     dest_path = args.dest_path
 
+    print(f"Converting {source_path} to {dest_path}")
     image_paths = filter_images_from_filepath(source_path)
+
+    if len(image_paths) == 0:
+        print(f"No images found at {source_path}")
+        return
 
     combined_pdf_object = convert_images_to_pdf(image_paths)
 
